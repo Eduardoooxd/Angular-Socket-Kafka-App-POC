@@ -1,0 +1,18 @@
+<section
+  class="shadow-lg p-5 max-w-[60ch]"
+  [ngClass]="{
+    'self-end': currentUserMessage(),
+    'self-start': !currentUserMessage()
+  }"
+>
+  <h3 class="font-bold">{{ currentUserMessage() ? "You" : message.sender }}</h3>
+  <h5 class="text-xs">{{ message.timestamp }}</h5>
+  <p
+    class="text-sm"
+    [ngClass]="{
+      'font-bold': !currentUserMessage()
+    }"
+  >
+    {{ message.content }}
+  </p>
+</section>

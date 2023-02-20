@@ -1,0 +1,21 @@
+<form class="flex flex-col gap-4" [formGroup]="userInputForm">
+  <input
+    type="text"
+    formControlName="userQuestion"
+    class="border border-400 p-2"
+  />
+  <div class="flex gap-x-4">
+    <button
+      class="bg-gray-600 text-white p-2 rounded flex-1 hover:opacity-75 transition-all"
+      (click)="sendRESTMessage()"
+    >
+      Send REST Request
+    </button>
+    <button
+      class="bg-blue-500 text-white p-2 rounded flex-1 hover:opacity-75 transition-all"
+      (click)="sendWebsocketMessage()"
+    >
+      Send Websocket Message
+    </button>
+  </div>
+</form>
