@@ -12,9 +12,7 @@ export class MessageComponent implements OnInit {
 
   constructor(private webSocketService: WebSocketService) {}
 
-  ngOnInit(): void {
-    console.log(this.message);
-  }
+  ngOnInit(): void {}
 
   currentUserMessage(): boolean {
     return this.message.sender === this.webSocketService.userUUID;

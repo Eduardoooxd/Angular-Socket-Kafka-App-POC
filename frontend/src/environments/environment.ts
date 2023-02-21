@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   webSocketServer: 'ws://localhost:9090/websocket/',
+  producerServer: 'http://localhost:8080/producer',
 };
 
 /*
