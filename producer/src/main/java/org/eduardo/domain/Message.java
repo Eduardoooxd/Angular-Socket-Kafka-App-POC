@@ -12,7 +12,6 @@ import java.util.Random;
 public class Message {
     private static Random randomGenerator = new Random();
     private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    private static LocalDateTime now = LocalDateTime.now();
 
     private String sender;
     private String content;
@@ -20,6 +19,7 @@ public class Message {
 
     public static Message randomMessage() {
         double randomNumber = randomGenerator.nextDouble() * 1000;
+        LocalDateTime now = LocalDateTime.now();
 
         return Message
                 .builder()
@@ -30,6 +30,7 @@ public class Message {
     }
 
     public Message manipulateUserMessage() {
+        LocalDateTime now = LocalDateTime.now();
         setContent(String.format("Content of user sent from Producer: %s", content));
         setTimestamp(dtf.format(now));
         return this;
