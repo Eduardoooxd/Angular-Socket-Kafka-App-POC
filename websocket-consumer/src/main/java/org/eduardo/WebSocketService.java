@@ -1,6 +1,6 @@
 package org.eduardo;
 
-import org.eduardo.domain.Message;
+import org.eduardo.domain.Notification;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.websocket.Session;
@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.eduardo.WebSocketConverter.parseToJson;
-import static org.eduardo.WebSocketConverter.parseToMessage;
+import static org.eduardo.WebSocketConverter.parseToNotification;
 
 @ApplicationScoped
 public class WebSocketService {
@@ -21,18 +21,18 @@ public class WebSocketService {
         sessions.put(userName, userSession);
         LOGGER.log(Level.INFO, String.format("User %s connected", userName));
 
-        Message ackMessage = Message.createAckMessage();
+        Notification ackNotification = Notification.buildAckNotification();
 
-        publishToUser(userSession, ackMessage);
+        publishToUser(userSession, ackNotification);
     }
 
     protected void closeUserConnection(String userName) {
         sessions.remove(userName);
         LOGGER.log(Level.INFO, String.format("User %s closed connection", userName));
 
-        Message closedConnectionMessage = Message.createClosedConnectionMessage(userName);
+        Notification closedConnectionNotification = Notification.buildClosedConnectionNotification(userName);
 
-        publishToAllUsers(closedConnectionMessage);
+        publishToAllUsers(closedConnectionNotification);
     }
 
     protected void errorOnUserConnection(String userName, Throwable throwable) {
@@ -42,32 +42,34 @@ public class WebSocketService {
 
     protected void onUserMessage(String json, String userName) {
         LOGGER.log(Level.INFO, String.format("User %s sent message %s", userName, json));
-        Message message = parseToMessage(json);
-        message = message.manipulateUserMessage();
-        publishToAllUsers(message);
-        // publish to everyone
+
+        Notification notification = parseToNotification(json);
+        publishToAllUsers(notification);
+
+        Notification systemNotification = notification.buildUserNotification();
+        publishToAllUsers(systemNotification);
     }
 
-    public void publishToUser(Session session, Object messageToUser) {
-        String json = parseToJson(messageToUser);
+    public void publishToUser(Session session, Object outgoingMessage) {
+        String json = parseToJson(outgoingMessage);
         session
                 .getAsyncRemote()
                 .sendObject(json, sendResult -> {
                     if (!sendResult.isOK()) {
-                        LOGGER.log(Level.SEVERE, "Error sending message to user: " + sendResult.getException().getMessage());
+                        LOGGER.log(Level.SEVERE, "Error sending to user: " + sendResult.getException().getMessage());
                     }
                 });
     }
 
-    public void publishToAllUsers(Object messageToUser) {
-        String json = parseToJson(messageToUser);
+    public void publishToAllUsers(Object outgoingMessage) {
+        String json = parseToJson(outgoingMessage);
         sessions
                 .values()
                 .forEach(session -> session
                         .getAsyncRemote()
                         .sendObject(json, sendResult -> {
                             if (!sendResult.isOK()) {
-                                LOGGER.log(Level.SEVERE, "Error sending message to ALL users: " + sendResult.getException().getMessage());
+                                LOGGER.log(Level.SEVERE, "Error sending to ALL users: " + sendResult.getException().getMessage());
                             }
                         })
 

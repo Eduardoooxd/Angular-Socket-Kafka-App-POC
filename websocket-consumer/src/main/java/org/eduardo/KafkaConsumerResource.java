@@ -1,7 +1,7 @@
 package org.eduardo;
 
 import org.eclipse.microprofile.reactive.messaging.Incoming;
-import org.eduardo.domain.Message;
+import org.eduardo.domain.Notification;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -16,8 +16,8 @@ public class KafkaConsumerResource {
     WebSocketService webSocketService;
 
     @Incoming("message-channel")
-    public void consume(Message message){
-        LOGGER.log(Level.INFO,String.format("Record received with Message: %s", message));
-        webSocketService.publishToAllUsers(message);
+    public void consume(Notification notification){
+        LOGGER.log(Level.INFO,String.format("Record received: %s", notification));
+        webSocketService.publishToAllUsers(notification);
     }
 }

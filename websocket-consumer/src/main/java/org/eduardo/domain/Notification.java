@@ -1,6 +1,5 @@
 package org.eduardo.domain;
 
-
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,38 +11,39 @@ import java.util.Random;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Message {
+public class Notification {
 
     private static Random randomGenerator = new Random();
     private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private static LocalDateTime now = LocalDateTime.now();
+    private static final String SYSTEM = "System";
 
     private String sender;
     private String content;
     private String timestamp;
 
-    public Message manipulateUserMessage() {
-        setContent(String.format("User %s sent message to websocket: %s",sender, content));
+    public Notification buildUserNotification() {
+        setContent(String.format("User %s sent message to websocket: %s", sender, content));
+        setSender(SYSTEM);
         setTimestamp(dtf.format(now));
         return this;
     }
 
-    public static Message createAckMessage() {
-        return Message
+    public static Notification buildAckNotification() {
+        return Notification
                 .builder()
-                .sender("System")
+                .sender(SYSTEM)
                 .content("Connected to Consumer")
                 .timestamp(dtf.format(now))
                 .build();
     }
 
-    public static Message createClosedConnectionMessage(String userName) {
-        return Message
+    public static Notification buildClosedConnectionNotification(String userName) {
+        return Notification
                 .builder()
-                .sender("System")
+                .sender(SYSTEM)
                 .content(String.format("User %s closed connection", userName))
                 .timestamp(dtf.format(now))
                 .build();
     }
-
 }
