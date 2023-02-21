@@ -4,7 +4,7 @@ import io.smallrye.mutiny.Multi;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Outgoing;
-import org.eduardo.domain.Message;
+import org.eduardo.domain.Notification;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -20,27 +20,28 @@ public class ProducerService {
 
     @Inject
     @Channel(KAFKA_OUTGOING_CHANNEL)
-    Emitter<Message> messageChannelEmitter;
+    Emitter<Notification> messageChannelEmitter;
 
     @Outgoing(KAFKA_OUTGOING_CHANNEL)
-    public Multi<Message> sendRandomMessage() {
+    public Multi<Notification> broadcastRandomNotification() {
         return Multi.createFrom()
                 .ticks()
                 .every(Duration.ofSeconds(15))
                 .map(x -> {
-                    LOGGER.log(Level.INFO, "Started to broadcast random message");
-                    return Message.randomMessage();
+                    LOGGER.log(Level.INFO, "Started to broadcast random notification");
+                    return Notification.buildRandomNotification();
                 });
     }
 
-    public Message sendUserMessage(Message userMessage) {
-        Message messageToBroadcast = userMessage.manipulateUserMessage();
-        LOGGER.log(Level.INFO, "Started to broadcast user message");
-        this.broadcastMessage(messageToBroadcast);
-        return messageToBroadcast;
+    public Notification createUserNotification(Notification userNotification) {
+        Notification notificationToBroadcast = userNotification.buildUserSentNotification();
+        LOGGER.log(Level.INFO, "Started to broadcast user notification");
+
+        broadcastNotification(notificationToBroadcast);
+        return notificationToBroadcast;
     }
 
-    private void broadcastMessage(Message message) {
-        this.messageChannelEmitter.send(message);
+    private void broadcastNotification(Notification notification) {
+        this.messageChannelEmitter.send(notification);
     }
 }

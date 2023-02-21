@@ -9,7 +9,7 @@ import java.util.Random;
 
 @Data
 @Builder
-public class Message {
+public class Notification {
     private static Random randomGenerator = new Random();
     private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
@@ -17,11 +17,11 @@ public class Message {
     private String content;
     private String timestamp;
 
-    public static Message randomMessage() {
+    public static Notification buildRandomNotification() {
         double randomNumber = randomGenerator.nextDouble() * 1000;
         LocalDateTime now = LocalDateTime.now();
 
-        return Message
+        return Notification
                 .builder()
                 .sender("Kafka Producer")
                 .content(String.format("Producer emitted random number %.2f", randomNumber))
@@ -29,7 +29,7 @@ public class Message {
                 .build();
     }
 
-    public Message manipulateUserMessage() {
+    public Notification buildUserSentNotification() {
         LocalDateTime now = LocalDateTime.now();
         setContent(String.format("Content of user sent from Producer: %s", content));
         setTimestamp(dtf.format(now));

@@ -1,6 +1,6 @@
 package org.eduardo;
 
-import org.eduardo.domain.Message;
+import org.eduardo.domain.Notification;
 
 import javax.inject.Inject;
 import javax.ws.rs.POST;
@@ -16,12 +16,12 @@ public class ProducerResource {
     ProducerService service;
 
     @POST
-    public Response createMessage(Message message) {
-        Message messageBroadcasted = service.sendUserMessage(message);
+    public Response createNotification(Notification notification) {
+        Notification notificationBroadcast = service.createUserNotification(notification);
 
         return Response
                 .status(CREATED)
-                .entity(messageBroadcasted)
+                .entity(notificationBroadcast)
                 .build();
     }
 }
