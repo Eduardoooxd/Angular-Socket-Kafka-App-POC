@@ -5,7 +5,7 @@ services:
         image: confluentinc/cp-zookeeper:latest
         restart: always
         ports:
-            - 2181:2181
+            - "2181:2181"
         environment:
             LOG_DIR: /tmp/logs
             ZOOKEEPER_CLIENT_PORT: 2181
@@ -17,7 +17,7 @@ services:
         depends_on:
             - zookeeper
         ports:
-            - 29092:29092
+            - "29092:29092"
         environment:
             LOG_DIR: "/tmp/logs"
             KAFKA_BROKER_ID: 1
@@ -26,3 +26,28 @@ services:
             KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
             KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
             KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    frontend:
+        build:
+            context: ./frontend
+        restart: always
+        depends_on:
+            - producer
+            - websocket-consumer
+        ports:
+            - "80:80"
+    producer:
+        image: eduardooolol/producer-app:latest
+        restart: always
+        depends_on:
+            - kafka
+            - zookeeper
+        ports:
+            - "8080:8080"
+    websocket-consumer:
+        image: eduardooolol/websocket-consumer-app:latest
+        restart: always
+        depends_on:
+            - kafka
+            - zookeeper
+        ports:
+            - "9090:9090"
