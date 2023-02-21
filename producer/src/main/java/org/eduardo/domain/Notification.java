@@ -13,6 +13,8 @@ public class Notification {
     private static Random randomGenerator = new Random();
     private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 
+    private static final String SYSTEM = "Producer";
+
     private String sender;
     private String content;
     private String timestamp;
@@ -23,7 +25,7 @@ public class Notification {
 
         return Notification
                 .builder()
-                .sender("Kafka Producer")
+                .sender(SYSTEM)
                 .content(String.format("Producer emitted random number %.2f", randomNumber))
                 .timestamp(dtf.format(now))
                 .build();
@@ -31,7 +33,8 @@ public class Notification {
 
     public Notification buildUserSentNotification() {
         LocalDateTime now = LocalDateTime.now();
-        setContent(String.format("Content of user sent from Producer: %s", content));
+        setContent(String.format("Content of user %s sent by HTTP: %s", sender ,content));
+        setSender(SYSTEM);
         setTimestamp(dtf.format(now));
         return this;
     }

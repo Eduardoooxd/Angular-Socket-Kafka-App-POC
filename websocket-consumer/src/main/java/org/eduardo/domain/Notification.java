@@ -16,7 +16,7 @@ public class Notification {
     private static Random randomGenerator = new Random();
     private static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
     private static LocalDateTime now = LocalDateTime.now();
-    private static final String SYSTEM = "System";
+    private static final String SYSTEM = "Consumer - Websocket";
 
     private String sender;
     private String content;
